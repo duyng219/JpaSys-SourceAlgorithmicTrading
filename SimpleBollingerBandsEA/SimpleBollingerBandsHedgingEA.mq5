@@ -22,5 +22,5 @@ void OnDeinit(const int reason)
 
 void OnTick()
 {
-
+  Print("Hello word");
 }
