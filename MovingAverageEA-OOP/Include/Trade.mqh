@@ -47,7 +47,7 @@ class CTrade
 };
 
 //+------------------------------------------------------------------+
-//| CTrade Class Methods
+//| CTrade Class Methods                                             |
 //+------------------------------------------------------------------+
 
 CTrade::CTrade(void)
@@ -224,3 +224,52 @@ bool CTrade::SelectPosition(string pSymbol)
     return(res);
 }
 
+//+------------------------------------------------------------------+
+//| NON-CLASS TRADE FUNCTIONS                                        |
+//+------------------------------------------------------------------+
+
+double AdjustAboveStopLevel(string pSymbol ,double pCurrentPrice, double pPriceToAdjust, int pPointsToAdd = 10)
+{
+  double adjustedPrice = pPriceToAdjust;
+
+  double point = SymbolInfoDouble(pSymbol,SYMBOL_POINT);
+  long stopsLevel = SymbolInfoInteger(pSymbol,SYMBOL_TRADE_STOPS_LEVEL);
+
+  if(stopsLevel > 0)
+  {
+    double stopsLevelPrice = stopsLevel * point;        //stops level points in price
+    stopsLevelPrice = pCurrentPrice + stopsLevelPrice;  //stops price level - distance from bid/ask
+
+    double addPoints = pPointsToAdd * point;            // Points that will be added/substracted to stops level price to make sure we respect the distance fixed by stops level
+
+    if(adjustedPrice <= stopsLevelPrice + addPoints)
+    {
+      adjustedPrice = stopsLevelPrice + addPoints;
+      Print("Price adjusted above stop level to " + string(adjustedPrice));
+    }
+  }
+  return adjustedPrice;
+}
+
+double AdjustBelowStopLevel(string pSymbol ,double pCurrentPrice, double pPriceToAdjust, int pPointsToAdd = 10)
+{
+  double adjustedPrice = pPriceToAdjust;
+
+  double point = SymbolInfoDouble(pSymbol,SYMBOL_POINT);
+  long stopsLevel = SymbolInfoInteger(pSymbol,SYMBOL_TRADE_STOPS_LEVEL);
+
+  if(stopsLevel > 0)
+  {
+    double stopsLevelPrice = stopsLevel * point;        //stops level points in price
+    stopsLevelPrice = pCurrentPrice - stopsLevelPrice;  //stops price level - distance from bid/ask
+
+    double addPoints = pPointsToAdd * point;            // Points that will be added/substracted to stops level price to make sure we respect the distance fixed by stops level
+
+    if(adjustedPrice >= stopsLevelPrice - addPoints)
+    {
+      adjustedPrice = stopsLevelPrice - addPoints;
+      Print("Price adjusted below stop level to " + string(adjustedPrice));
+    }
+  }
+  return adjustedPrice;
+}
