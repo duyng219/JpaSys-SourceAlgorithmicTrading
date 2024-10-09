@@ -17,18 +17,12 @@
 //+------------------------------------------------------------------+
 //| Object & Include Files                                           |
 //+------------------------------------------------------------------+
-#include "Include/Trade.mqh"
+#include "Library v2.0/Library.mqh"
+
 CTrade Trade;
-
-#include "Include/PositionManagement.mqh"
 CPM PM;
-
-#include "Include/Bar.mqh"
 CBar Bar;
-
-#include "Include/Indicators.mqh"
 CiMA MA;
-
 
 //+------------------------------------------------------------------+
 //| EA Enumerations / Bảng liệt kê EA                                |
@@ -110,8 +104,9 @@ void OnTick()
     glTimeBarOpen = iTime(_Symbol, PERIOD_CURRENT, 0);
   }
 
-  if (newBar == true)
+  if (newBar == true  && IsMarketOpen())
   {
+    DelayOnMarketClosed(_Period);
     //--------------------//
     // PRICE & INDICATORS //
     //--------------------//
